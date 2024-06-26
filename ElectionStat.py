@@ -54,14 +54,14 @@ class elecstat(object):
             datapoints.append(xy)
         return datapoints
 
-def plotting(file, datapoints):
+def plotting(filename, file, datapoints):
     """Plotting"""
     # Number of rows and coloums of the plot
     ncols, nrows = 2, 1
 
     fig = plt.figure(figsize=(6, nrows * 3), dpi=150)
     plt.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.8, wspace=0.2, hspace=0.5)
-    plt.suptitle(f"Election Statistics: {file}", fontsize=15, y=0.95)
+    plt.suptitle(f"Election Statistics: {filename}", fontsize=15, y=0.95)
 
     labels = [['$M/<M>$', '$f(M/<M>)$', 'Scaled Margin'],
               [r'$\mu/<\mu>$',r'$f(\mu/<\mu>)$','Scaled Specific Margin']]
@@ -86,9 +86,14 @@ def plotting(file, datapoints):
 
 if __name__ == "__main__":
     # Get all the files in the directory
-    files = Path().glob('*.csv')
+    path = os.getcwd()
+    loc = new_directory = os.path.join(path, "Election Data")
+    files = Path(loc).glob('*.csv')
+    files = sorted(files)
     figures = []
     for file in files:
+        filename = str(file)
+        filename = filename.split("/")
         data = pd.read_csv(file, low_memory=False)
         data = data.loc[(data["Position"] == 1) & data['Margin'].notna() & (data['Valid_Votes'] != 0)]
 
@@ -100,9 +105,9 @@ if __name__ == "__main__":
         elcdata = elecstat(turnout,margin)
         datapoints = elcdata.plotter(bins)
 
-        fig = plotting(file, datapoints)
+        fig = plotting(filename[-1], file, datapoints)
         figures.append(fig)
-        print(file)
+        print(filename[-1])
 
     pp = PdfPages("Election Statistics.pdf")
     for figure in figures: pp.savefig(figure)
