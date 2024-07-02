@@ -54,7 +54,7 @@ class elecstat(object):
             datapoints.append(xy)
         return datapoints
 
-def plotting(filename, file, datapoints):
+def plotting(filename, file, datapoints,pp):
     """Plotting"""
     # Number of rows and coloums of the plot
     ncols, nrows = 2, 1
@@ -79,8 +79,9 @@ def plotting(filename, file, datapoints):
 
         ax.legend(loc="upper right", fontsize=4)
         ax.set_xlabel, ax.set_ylabel, ax.set_title = labels[((p+2)//2)-1]
+    
+    pp.savefig(fig)
 
-    return fig
 
 
 
@@ -90,6 +91,7 @@ if __name__ == "__main__":
     loc = new_directory = os.path.join(path, "Election Data")
     files = Path(loc).glob('*.csv')
     files = sorted(files)
+    pp = PdfPages("Election Statistics.pdf")
     figures = []
     for file in files:
         filename = str(file)
@@ -105,12 +107,9 @@ if __name__ == "__main__":
         elcdata = elecstat(turnout,margin)
         datapoints = elcdata.plotter(bins)
 
-        fig = plotting(filename[-1], file, datapoints)
-        figures.append(fig)
+        plotting(filename[-1], file, datapoints,pp)
         print(filename[-1])
 
-    pp = PdfPages("Election Statistics.pdf")
-    for figure in figures: pp.savefig(figure)
     pp.close()
     
     
