@@ -1,1 +1,1 @@
-# Election Statistic
+# Election Statistics
